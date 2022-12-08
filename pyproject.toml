@@ -6,6 +6,16 @@ authors = ["Jerome Leclanche <jerome@leclan.ch>"]
 license = "MIT"
 readme = "README.md"
 packages = [{include = "wise_api"}]
+repository = "https://github.com/financica/python-wise-api"
+keywords = ["wise", "transferwise", "api"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Topic :: Internet :: WWW/HTTP",
+    "Typing :: Typed",
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
