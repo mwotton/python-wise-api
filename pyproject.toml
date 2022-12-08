@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wise-api"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python API client for the Wise API"
 authors = ["Jerome Leclanche <jerome@leclan.ch>"]
 license = "MIT"
