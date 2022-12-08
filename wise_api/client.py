@@ -7,7 +7,7 @@ from .exceptions import WiseInvalidPublicKeyError
 from .utils import zulu_time
 
 
-def sca_required(resp: Response):
+def sca_required(resp: Response) -> bool:
     return (
         resp.status_code == 403
         and resp.headers.get("x-2fa-approval-result") == "REJECTED"
