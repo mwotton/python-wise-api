@@ -73,6 +73,25 @@ class APIClient:
     def get_borderless_accounts(self, profile_id: WiseId):
         return self.get("/v1/borderless-accounts", params={"profileId": profile_id})
 
+    def get_balance_statement(
+        self,
+        profile_id: WiseId,
+        balance_id: WiseId,
+        *,
+        currency: str,
+        start: datetime,
+        end: datetime,
+        type: Literal["pdf", "csv", "json"] = "json",
+    ):
+        return self.get(
+            f"/v1/profiles/{profile_id}/balance-statements/{balance_id}/statement.{type}",
+            params={
+                "intervalStart": zulu_time(start),
+                "intervalEnd": zulu_time(end),
+                "currency": currency,
+            },
+        )
+
     def get_borderless_account_statement(
         self,
         profile_id: WiseId,
