@@ -82,6 +82,7 @@ class APIClient:
         start: datetime,
         end: datetime,
         type: Literal["pdf", "csv", "json"] = "json",
+        compact: bool = False,
     ):
         return self.get(
             f"/v1/profiles/{profile_id}/balance-statements/{balance_id}/statement.{type}",
@@ -89,6 +90,7 @@ class APIClient:
                 "intervalStart": zulu_time(start),
                 "intervalEnd": zulu_time(end),
                 "currency": currency,
+                "type": "COMPACT" if compact else "FLAT",
             },
         )
 
@@ -101,6 +103,7 @@ class APIClient:
         start: datetime,
         end: datetime,
         type: Literal["pdf", "csv", "json"] = "json",
+        compact: bool = False,
     ):
         return self.get(
             f"/v3/profiles/{profile_id}/borderless-accounts/{account_id}/statement.{type}",
@@ -108,6 +111,7 @@ class APIClient:
                 "intervalStart": zulu_time(start),
                 "intervalEnd": zulu_time(end),
                 "currency": currency,
+                "type": "COMPACT" if compact else "FLAT",
             },
         )
 
