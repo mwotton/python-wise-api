@@ -6,6 +6,8 @@ from .crypto import sign_approval_token
 from .exceptions import WiseInvalidPublicKeyError
 from .utils import zulu_time
 
+WiseId = int | str
+
 
 def sca_required(resp: Response) -> bool:
     return (
@@ -67,20 +69,20 @@ class APIClient:
     def get_addresses(self):
         return self.get("/v1/addresses")
 
-    def get_borderless_accounts(self, profile_id: int | str):
+    def get_borderless_accounts(self, profile_id: WiseId):
         return self.get("/v1/borderless-accounts", params={"profileId": profile_id})
 
     def get_borderless_account_statement(
         self,
-        profile: int,
-        account_id: int,
+        profile_id: WiseId,
+        account_id: WiseId,
+        *,
         currency: str,
         start: datetime,
         end: datetime,
     ):
-
         return self.get(
-            f"/v3/profiles/{profile}/borderless-accounts/{account_id}/statement.json",
+            f"/v3/profiles/{profile_id}/borderless-accounts/{account_id}/statement.json",
             params={
                 "intervalStart": zulu_time(start),
                 "intervalEnd": zulu_time(end),
@@ -88,11 +90,11 @@ class APIClient:
             },
         )
 
-    def get_recipient_accounts(self, profile_id: int | str):
+    def get_recipient_accounts(self, profile_id: WiseId):
         return self.get("/v1/accounts", params={"profileId": profile_id})
 
-    def get_recipient_account_by_id(self, account_id: int | str):
+    def get_recipient_account_by_id(self, account_id: WiseId):
         return self.get(f"/v1/accounts/{account_id}")
 
-    def get_transfer_by_id(self, transfer_id: int | str):
+    def get_transfer_by_id(self, transfer_id: WiseId):
         return self.get(f"/v1/transfers/{transfer_id}")
