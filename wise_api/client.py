@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 from requests import Response, Session
 
@@ -80,9 +81,10 @@ class APIClient:
         currency: str,
         start: datetime,
         end: datetime,
+        type: Literal["pdf", "csv", "json"] = "json",
     ):
         return self.get(
-            f"/v3/profiles/{profile_id}/borderless-accounts/{account_id}/statement.json",
+            f"/v3/profiles/{profile_id}/borderless-accounts/{account_id}/statement.{type}",
             params={
                 "intervalStart": zulu_time(start),
                 "intervalEnd": zulu_time(end),
