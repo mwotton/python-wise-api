@@ -168,14 +168,14 @@ class APIClient:
             if next_cursor:
                 current_params["nextCursor"] = next_cursor
 
-            response = self.get(f"/v1/profiles/{profile_id}/activities", params=current_params)
+            response_data = self.get(f"/v1/profiles/{profile_id}/activities", params=current_params)
 
             # Assuming the activities are in a list under the key 'activities'
             # Adjust this key if the actual API response structure is different
-            activities = response.get("activities", [])
+            activities = response_data.get("activities", [])
             for activity in activities:
                 yield activity
 
-            next_cursor = response.get("nextCursor")
+            next_cursor = response_data.get("cursor")
             if not next_cursor:
                 break
