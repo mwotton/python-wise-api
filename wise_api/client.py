@@ -123,3 +123,47 @@ class APIClient:
 
     def get_transfer_by_id(self, transfer_id: WiseId):
         return self.get(f"/v1/transfers/{transfer_id}")
+
+    def get_activities(
+        self,
+        profile_id: WiseId,
+        *,
+        monetary_resource_type: str | None = None,
+        status: str | None = None,
+        since: datetime | None = None,
+        until: datetime | None = None,
+        next_cursor: str | None = None,
+        size: int | None = None,
+    ):
+        """
+        List activities for a profile.
+
+        Args:
+            profile_id: The ID of the profile to fetch activities for.
+            monetary_resource_type: Filter activity by resource type.
+            status: Filter by activity status.
+            since: Filter activity list after a certain timestamp.
+            until: Filter activity list until a certain timestamp.
+            next_cursor: Cursor for pagination to get the next page of activities.
+            size: Desired size of the result set (min 1, max 100, default 10).
+
+        Returns:
+            A dictionary containing the list of activities and a cursor for pagination.
+        """
+        params = {}
+        if monetary_resource_type:
+            params["monetaryResourceType"] = monetary_resource_type
+        if status:
+            params["status"] = status
+        if since:
+            params["since"] = zulu_time(since)
+        if until:
+            params["until"] = zulu_time(until)
+        if next_cursor:
+            params["nextCursor"] = next_cursor
+        if size is not None:
+            if not 1 <= size <= 100:
+                raise ValueError("Size must be between 1 and 100")
+            params["size"] = size
+
+        return self.get(f"/v1/profiles/{profile_id}/activities", params=params)
