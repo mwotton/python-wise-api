@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Literal
+from typing import Iterator, Literal
 
 from requests import Response, Session
 
@@ -132,11 +132,10 @@ class APIClient:
         status: str | None = None,
         since: datetime | None = None,
         until: datetime | None = None,
-        next_cursor: str | None = None,
         size: int | None = None,
-    ):
+    ) -> Iterator[dict]:
         """
-        List activities for a profile.
+        Iterate through activities for a profile, handling pagination automatically.
 
         Args:
             profile_id: The ID of the profile to fetch activities for.
@@ -144,11 +143,10 @@ class APIClient:
             status: Filter by activity status.
             since: Filter activity list after a certain timestamp.
             until: Filter activity list until a certain timestamp.
-            next_cursor: Cursor for pagination to get the next page of activities.
-            size: Desired size of the result set (min 1, max 100, default 10).
+            size: Desired size of the result set per page (min 1, max 100, default 10).
 
-        Returns:
-            A dictionary containing the list of activities and a cursor for pagination.
+        Yields:
+            Dictionaries representing individual activities.
         """
         params = {}
         if monetary_resource_type:
@@ -159,11 +157,25 @@ class APIClient:
             params["since"] = zulu_time(since)
         if until:
             params["until"] = zulu_time(until)
-        if next_cursor:
-            params["nextCursor"] = next_cursor
         if size is not None:
             if not 1 <= size <= 100:
                 raise ValueError("Size must be between 1 and 100")
             params["size"] = size
 
-        return self.get(f"/v1/profiles/{profile_id}/activities", params=params)
+        next_cursor = None
+        while True:
+            current_params = params.copy()
+            if next_cursor:
+                current_params["nextCursor"] = next_cursor
+
+            response = self.get(f"/v1/profiles/{profile_id}/activities", params=current_params)
+
+            # Assuming the activities are in a list under the key 'activities'
+            # Adjust this key if the actual API response structure is different
+            activities = response.get("activities", [])
+            for activity in activities:
+                yield activity
+
+            next_cursor = response.get("nextCursor")
+            if not next_cursor:
+                break
